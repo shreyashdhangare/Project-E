@@ -1,3 +1,5 @@
+import pandas as pd
+
 def parse_dml(dml_content):
     """
     Parse a DML file to extract field names, data types, and delimiters without using `re`.
@@ -33,4 +35,22 @@ end;
 
 # Parse the DML file
 fields = parse_dml(dml_content)
-print("Parsed Fields:", fields)
+
+# Path to the .dat file
+dat_file_path = 'data.dat'
+
+# Read the .dat file into a DataFrame
+df = pd.read_csv(dat_file_path, delimiter=',', header=None)
+
+# Assign column names based on the DML file
+column_names = [field['name'] for field in fields]
+df.columns = column_names
+
+# Convert columns to appropriate data types
+df['fruitediblity'] = df['fruitediblity'].astype(float)  # Decimal
+df['friuttasteblity'] = df['friuttasteblity'].astype(float)  # Decimal
+df['fruitseasonstartdate'] = pd.to_datetime(df['fruitseasonstartdate'])  # Date
+
+# Print the DataFrame
+print(df)
+print(df.dtypes)
